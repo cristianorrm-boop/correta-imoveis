@@ -215,7 +215,7 @@ body {
     box-shadow: var(--shadow-md);
     z-index: var(--z-fixed);
     transition: all var(--transition-base);
-    /* background-color: #ffffff; força branco  */
+    background-color: #ffffff; 
 }
 
 .nav {

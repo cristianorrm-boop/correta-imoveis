@@ -148,45 +148,79 @@ animateElements.forEach(el => observer.observe(el));
 
 
 // ============================================
-// CONTADOR ANIMADO - Para estatísticas do hero
+// CONTADOR ANIMADO - VERSÃO SIMPLES E FUNCIONAL
 // ============================================
-function animateCounter(element, target, duration = 2000) {
-    const start = 0;
-    const increment = target / (duration / 16);
-    let current = start;
-
-    const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-            element.textContent = target + (element.textContent.includes('+') ? '+' : '') +
-                                 (element.textContent.includes('%') ? '%' : '');
-            clearInterval(timer);
+function iniciarContadores() {
+    const contadores = document.querySelectorAll('.stat-number');
+    
+    contadores.forEach(contador => {
+        // Pega o texto original (ex: "5000+", "98%", "+5.000")
+        const textoOriginal = contador.textContent;
+        
+        // Extrai apenas os números
+        const numeros = textoOriginal.match(/\d+/g);
+        if (!numeros) return;
+        
+        const numeroFinal = parseInt(numeros.join(''));
+        if (isNaN(numeroFinal)) return;
+        
+        // Extrai o símbolo (+, %, etc)
+        const simbolo = textoOriginal.replace(/[\d\s]/g, '');
+        
+        // Verifica se o símbolo vem antes ou depois
+        const simboloAntes = textoOriginal.indexOf(simbolo) === 0;
+        
+        // Reseta para 0
+        if (simboloAntes) {
+            contador.textContent = simbolo + '0';
         } else {
-            element.textContent = Math.floor(current) + (element.textContent.includes('+') ? '+' : '') +
-                                 (element.textContent.includes('%') ? '%' : '');
+            contador.textContent = '0' + simbolo;
         }
-    }, 16);
+        
+        // Animação
+        let numeroAtual = 0;
+        const incremento = numeroFinal / 60; // 60 passos
+        const intervalo = setInterval(() => {
+            numeroAtual += incremento;
+            
+            if (numeroAtual >= numeroFinal) {
+                // Finaliza
+                if (simboloAntes) {
+                    contador.textContent = simbolo + numeroFinal;
+                } else {
+                    contador.textContent = numeroFinal + simbolo;
+                }
+                clearInterval(intervalo);
+            } else {
+                // Atualiza
+                const valorAtual = Math.floor(numeroAtual);
+                if (simboloAntes) {
+                    contador.textContent = simbolo + valorAtual;
+                } else {
+                    contador.textContent = valorAtual + simbolo;
+                }
+            }
+        }, 30); // 30ms = ~33fps
+    });
 }
 
-// Animar contadores quando a seção hero estiver visível
-const heroObserver = new IntersectionObserver((entries) => {
+// Detecta quando o hero estiver visível
+const observerHero = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
-            const statNumbers = document.querySelectorAll('.stat-number');
-            statNumbers.forEach(stat => {
-                const text = stat.textContent;
-                const number = parseInt(text.replace(/\D/g, ''));
-                stat.textContent = '0';
-                animateCounter(stat, number);
-            });
-            heroObserver.unobserve(entry.target);
+            iniciarContadores();
+            observerHero.disconnect(); // Para de observar depois que inicia
         }
     });
-}, { threshold: 0.5 });
+}, { threshold: 0.3 }); // 30% visível já inicia
 
-const heroSection = document.querySelector('.hero');
-if (heroSection) {
-    heroObserver.observe(heroSection);
+// Inicia o observer
+const hero = document.querySelector('.hero');
+if (hero) {
+    observerHero.observe(hero);
+} else {
+    // Se não achar .hero, tenta iniciar direto
+    iniciarContadores();
 }
 
 // ============================================
