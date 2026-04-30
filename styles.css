@@ -1272,33 +1272,32 @@ body {
         right: -100%;
         width: 90%;
         max-width: 350px;
-        height: auto;  /* ← MUDEI: agora a altura é automática (só até os links) */
+        height: auto; 
         background-color: #ffffff;
         padding: var(--spacing-2xl) var(--spacing-lg);
         transition: right var(--transition-base);
         box-shadow: var(--shadow-xl);
         z-index: 1000;
-        border-radius: 0 0 20px 20px;  /* ← ADICIONEI: cantos arredondados embaixo para ficar bonito */
+        border-radius: 0 0 20px 20px; 
     }
 
         .nav__menu.show-menu {
         right: 0;
     }
 
-    /* GARANTIR QUE OS LINKS FIQUEM VISÍVEIS */
     .nav__list {
         flex-direction: column;
         gap: var(--spacing-lg);
-        background: transparent; /* fundo transparente para não criar dupla camada */
+        background: transparent;
     }
 
     .nav__link {
-        color: #111111; /* garante texto escuro sobre fundo branco */
+        color: #111111; 
         font-weight: 500;
         display: block;
         padding: 8px 0;
     }
-    
+
     .nav__menu.show-menu {
         right: 0;
     }
